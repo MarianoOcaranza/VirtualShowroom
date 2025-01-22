@@ -12,5 +12,5 @@ Como probar la API? (lo hecho hasta ahora)
 - Comprobar que exista el model de Productos en el Admin, y crear uno o dos productos nuevos.
   
 **Una vez creados y guardados los productos, se puede probar la API de la siguiente manera**
-- Desde un navegador o desde Postman, con el servidor corriendo, ingresar a http://127.0.0.1/api/products para obtener la lista de productos
-- Desde un navegador o desde Postman, con el servidor corriendo, ingresar a http://127.0.0.1/api/products/1 para obtener el detalle del producto 1 (se puede reemplazar el 1 por la PK de algun otro producto, y al API solo devolvera ese producto)
+- Desde un navegador o desde Postman, con el servidor corriendo, ingresar a http://127.0.0.1:8000/api/products para obtener la lista de productos
+- Desde un navegador o desde Postman, con el servidor corriendo, ingresar a http://127.0.0.1:8000/api/products/1 para obtener el detalle del producto 1 (se puede reemplazar el 1 por la PK de algun otro producto, y al API solo devolvera ese producto)
