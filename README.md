@@ -7,7 +7,7 @@ Como probar la API? (lo hecho hasta ahora)
 - Instalar dependencias necesarias (pip install django djangorestframework pillow)
 - Ejecutar python manage.py makemigrations, y luego python manage.py migrate (esto crea la base de datos de sqlite3)
 - Ejecutar python manage.py createsuperuser para crear un usuario administrador
-- Ejecutar python manage.py runserver para iniciar el servidor (por lo general se ejecuta en http://127.0.0.1:8000/)
+- Ejecutar python manage.py runserver para iniciar el servidor (por lo general se ejecuta en http://127.0.0.1:8000 (este link no funciona ya que no hay view asignada))
 - Abrir en el navegador http://127.0.0.1:8000/admin e iniciar sesion con el superusuario creado.
 - Comprobar que exista el model de Productos en el Admin, y crear uno o dos productos nuevos.
   
