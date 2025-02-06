@@ -3,8 +3,9 @@ Virtual Showroom for clothes entrepreneurship
 
 ----
 Como probar la API? (lo hecho hasta ahora)
-- Clonar el repositorio
-- Instalar dependencias necesarias (pip install django djangorestframework pillow)
+- Clonar el repositorio localmente
+- Instalar dependencias necesarias a partir del requirements.txt (pip install -r requirements.txt)
+- Configurar las variables de entorno segun el archivo env-example (crear un archivo .env en el mismo directorio dentro de la carpeta backend). Usar algun generador de SECRET KEY para la clave secreta de Django
 - Ejecutar python manage.py makemigrations, y luego python manage.py migrate (esto crea la base de datos de sqlite3)
 - Ejecutar python manage.py createsuperuser para crear un usuario administrador
 - Ejecutar python manage.py runserver para iniciar el servidor (por lo general se ejecuta en http://127.0.0.1:8000 (este link no funciona ya que no hay view asignada))
