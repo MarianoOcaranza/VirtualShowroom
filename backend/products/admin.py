@@ -10,7 +10,7 @@ class ProductAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     fieldsets = (
         ('Información básica', {
-            'fields': ('name', 'description', 'price', 'image')
+            'fields': ('name', 'description', 'price', 'category', 'image')
         }),
         ('Detalles adicionales', {
             'fields': ('sizes_available', 'colors_available'),
