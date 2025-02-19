@@ -16,3 +16,7 @@ class ProductListView(generics.ListAPIView):
 class ProductDetailView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
+class FeaturedListView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    queryset = Product.objects.filter(is_featured=True)

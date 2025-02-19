@@ -13,7 +13,7 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('name', 'description', 'price', 'category', 'image')
         }),
         ('Detalles adicionales', {
-            'fields': ('sizes_available', 'colors_available'),
+            'fields': ('sizes_available', 'colors_available', 'is_featured'),
             'classes': ('collapse',)
         }),
         ('Fechas', {
