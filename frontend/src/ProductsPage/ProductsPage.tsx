@@ -10,6 +10,8 @@ interface Product {
     price: number;
     image: string;
     category: string;
+    colors_available: string;
+    sizes_available: string;
 }
 
 const ProductsPage: React.FC = ()=> {
@@ -18,7 +20,6 @@ const ProductsPage: React.FC = ()=> {
     const [loading, setLoading] = useState(false);
 
     useEffect(()=> {
-        console.log(category)
         const getProducts = async ()=> {
             setLoading(true);
             try {
@@ -45,7 +46,7 @@ const ProductsPage: React.FC = ()=> {
         <p>
             {loading ? 'cargando...' : ''}
         </p>
-        <div>
+        <div className='flex gap-3 justify-center flex-wrap p-4'>
             {products.map((product)=> (
                 <Product key={product.id} product={product}/>
             ))}
