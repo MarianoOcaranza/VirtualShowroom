@@ -9,9 +9,11 @@ interface Props {
 const MainLayout: React.FC<Props> = (props)=> {
     return (
         <>
+        <div className="flex flex-col min-h-screen">
             <Header />
-                {props.children}
+                <main className="flex-grow">{props.children}</main>
             <Footer />
+        </div> 
         </>
     )
 }

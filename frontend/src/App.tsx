@@ -13,7 +13,6 @@ const App: React.FC = ()=> {
         <Route path='/products/:id' element={<ProductDetail/>}/>
       </Routes>
     </MainLayout>
-    
     </>
   )
 }

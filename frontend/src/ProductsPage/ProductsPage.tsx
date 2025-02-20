@@ -3,12 +3,16 @@ import Selector from "./Selector"
 import Product from "./Product";
 import axios from "axios";
 
+interface ImageProps {
+    id: number;
+    image: string;
+}
 interface Product {
     id: number;
     name: string;
     description: string;
     price: number;
-    image: string;
+    images: ImageProps[];
     category: string;
     colors_available: string;
     sizes_available: string;
@@ -46,11 +50,11 @@ const ProductsPage: React.FC = ()=> {
         <p>
             {loading ? 'cargando...' : ''}
         </p>
-        <div className='flex gap-3 justify-center flex-wrap p-4'>
+        <div className='flex gap-4 lg:justify-start justify-center flex-wrap'>
             {products.map((product)=> (
                 <Product key={product.id} product={product}/>
             ))}
-        </div>
+        </div>        
     </>
     )
 }

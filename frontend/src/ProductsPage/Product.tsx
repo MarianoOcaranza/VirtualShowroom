@@ -1,10 +1,15 @@
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router";
 
+interface ImageProps {
+    id: number;
+    image: string;
+}
 interface ProductProps {
     id: number;
     name: string;
     price: number;
-    image: string;
+    images: ImageProps[];
     category: string;
     colors_available: string;
     sizes_available: string;
@@ -12,20 +17,55 @@ interface ProductProps {
 
 const Product: React.FC<{product: ProductProps}> = ({product}) => {
     const navigate = useNavigate()
+    const [index, setIndex] = useState(0)
+    const intervalRef = useRef<number | null>(null);
+
+
+    const handleHover = ()=> {
+        if (intervalRef.current !== null) return;
+
+        intervalRef.current = window.setInterval(()=> {
+            setIndex((prevIndex)=> (prevIndex + 1) % product.images.length)
+        }, 2000);
+    };
+
+    const handleMouseLeave = ()=> {
+        if (intervalRef.current !== null) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+        setIndex(0);
+    }
 
     const handleClick = ()=> {
         navigate(`/products/${product.id}`)
     }
 
     return (
-        <div className='shadow-md p-3 cursor-pointer' onClick={handleClick}>
-            <img src={product.image} alt="" />
-            <p className='text-2xl text-center text-gray-700'>{product.name}</p>
-            <p className='text-xl font-extralight'>${product.price}</p>
-            <p className='mt-3 text-sm text-gray-500'>Categoría: {product.category}</p>
-            <p className='text-sm text-gray-500'>Colores disponibles: {product.colors_available}</p>
-            <p className='text-sm text-gray-500'>Talles disponibles: {product.sizes_available}</p>
+        <div 
+        className="relative w-64 h-96 cursor-pointer rounded-lg shadow-lg overflow-hidden bg-white transition-transform hover:scale-105"
+        onClick={handleClick}
+        onMouseEnter={handleHover}
+        onMouseLeave={handleMouseLeave}
+      >
+        {/* Contenedor de la Imagen */}
+        <div className="w-full h-2/3">
+          <img src={product.images[index]?.image} alt={product.name} className="w-full h-full object-cover" />
         </div>
+      
+        {/* Contenedor de la Información */}
+        <div className="absolute bottom-0 w-full bg-white p-3 border-t border-gray-200">
+          <p className="text-lg font-semibold text-gray-700 text-center">{product.name}</p>
+          <p className="text-md text-gray-600 text-center">${product.price}</p>
+      
+          <div className="mt-2 text-xs text-gray-500 text-center">
+            <p><span className="font-medium">Categoría:</span> {product.category}</p>
+            <p><span className="font-medium">Colores:</span> {product.colors_available}</p>
+            <p><span className="font-medium">Talles:</span> {product.sizes_available}</p>
+          </div>
+        </div>
+      </div>
+      
     )
 
 }

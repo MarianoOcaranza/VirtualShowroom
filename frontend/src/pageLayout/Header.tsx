@@ -5,7 +5,7 @@ const Header: React.FC = ()=> {
     const [isOpen, setIsOpen] = useState(false);
     const location = useLocation();
     return (
-        <nav className='bg-black p-4 sticky top-0 text-white'>
+        <nav className='bg-black p-4 sticky z-1 top-0 text-white'>
             <div className='container mx-auto flex justify-between items-center'>
                 <h1 className='text-xl font-bold'>Logo</h1>
                 <button className='md:hidden text-xl cursor-pointer' onClick={()=> setIsOpen(!isOpen)}>

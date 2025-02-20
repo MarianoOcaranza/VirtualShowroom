@@ -5,7 +5,7 @@ interface SelectorProps {
 }
 
 const Selector: React.FC<SelectorProps> = ({onSelectCategory})=> {
-    const categories = ['Todo', 'Remeras', 'Pantalones', 'Camperas', 'Buzos'];
+    const categories = ['Todo', 'Remeras', 'Pantalones', 'Musculosas', 'Buzos'];
     const [selected, setSelected] = useState('Todo');
 
     const handleSelect = (category: string)=> {
