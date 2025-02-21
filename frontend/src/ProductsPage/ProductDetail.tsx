@@ -39,7 +39,7 @@ const ProductDetail: React.FC = ()=> {
     useEffect(()=> {
         const interval = setInterval(() => {
             setIndex((prevIndex) => (prevIndex+1) % product!.images.length)
-        }, 3000)
+        }, 2000)
         return ()=> clearInterval(interval);
     }, [product]);
 
@@ -51,13 +51,16 @@ const ProductDetail: React.FC = ()=> {
         <>
         <div className="w-full max-w-3xl gap-10 items-center mx-auto flex flex-col md:flex-row mt-10">
             <img src={product.images[index].image} className='w-md md:w-1/2 h-96 flex object-cover shadow-lg overflow-hidden' alt="" />
-            <div className='w-1/2'>
+            <div className='md:w-1/2 w-xs'>
                 <p className='text-3xl font-bold'>{product.name}</p>
                 <p className='text-xl font-extralight'>${product.price}</p>
                 <p className='text-sm font-light mb-3 text-gray-800'>{product.description}</p>
                 <p>Colores disponibles: {product.colors_available}</p>
                 <p className='mb-4'>Talles disponibles: {product.sizes_available}</p>
-                <button className='bg-black text-gray-200 p-4 mb-4 font-bold hover:text-black hover:bg-gray-200 cursor-pointer transition-all duration-300'>Consultar por el producto!</button>
+                <div className='flex-col flex'>
+                    <button className='bg-black text-gray-200 p-4 mb-4 font-bold hover:text-black hover:bg-gray-200 cursor-pointer transition-all duration-300'>Consultar por el producto!</button>
+                    <a className='p-3 w-fit bg-gray-200 mb-4 hover:bg-gray-500 hover:text-white transition-all duration-300' href="/products">...Volver al showroom</a>
+                </div>
                 <p>Envíos y medios de pago</p>
                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae est explicabo laudantium consectetur sint reiciendis magnam. Ea vitae minus, sit asperiores quibusdam natus odit, at quos eveniet, error doloremque numquam.</p>
             </div>

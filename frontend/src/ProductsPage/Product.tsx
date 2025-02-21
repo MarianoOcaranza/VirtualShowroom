@@ -26,7 +26,7 @@ const Product: React.FC<{product: ProductProps}> = ({product}) => {
 
         intervalRef.current = window.setInterval(()=> {
             setIndex((prevIndex)=> (prevIndex + 1) % product.images.length)
-        }, 2000);
+        }, 1000);
     };
 
     const handleMouseLeave = ()=> {
