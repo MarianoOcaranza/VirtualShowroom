@@ -3,6 +3,8 @@ import MainLayout from "./pageLayout/MainLayout"
 import ProductsPage from "./ProductsPage/ProductsPage"
 import ProductDetail from "./ProductsPage/ProductDetail"
 import LandingPage from "./LandingPage/LandingPage"
+import AdminPanel from "./AdminPage/AdminPanel"
+import Login from './AdminPage/Login.tsx'
 
 const App: React.FC = ()=> {
   return (
@@ -12,6 +14,8 @@ const App: React.FC = ()=> {
         <Route path='/' element={<LandingPage/>}/>
         <Route path='/products' element={<ProductsPage/>}/>
         <Route path='/products/:id' element={<ProductDetail/>}/>
+        <Route path='/admin' element={<AdminPanel/>}/>
+        <Route path='/login' element={<Login/>}/>
       </Routes>
     </MainLayout>
     </>

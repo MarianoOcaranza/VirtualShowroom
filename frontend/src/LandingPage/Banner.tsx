@@ -5,7 +5,7 @@ const Banner: React.FC = ()=> {
             <div
                 className="absolute inset-0 md:bg-contain bg-cover bg-center"
                 style={{
-                    backgroundImage: "url('../../public/bannertest.webp')",
+                    backgroundImage: "url('bannertest.webp')",
                 }}/>
         
             <div className='absolute inset-0 bg-black opacity-50'/>
