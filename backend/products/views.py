@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from rest_framework import generics
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Product, ImageProduct
+from .serializers import ProductSerializer, ImageProductSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from authentication.permissions import IsVendedor
 from authentication.authentication import CustomJWTAuthentication
+from rest_framework import serializers
 
 # Create your views here.
 class ProductListView(generics.ListAPIView):
@@ -50,3 +51,26 @@ class ProductDeleteView(generics.DestroyAPIView):
 
     def get_queryset(self):
         return Product.objects.filter(owner=self.request.user)
+    
+class ImageProductCreateView(generics.CreateAPIView):
+    serializer_class = ImageProductSerializer
+    permission_classes = [IsAuthenticated, IsVendedor]
+    authentication_classes = [CustomJWTAuthentication]
+
+    def perform_create(self, serializer):
+        product_id = self.kwargs.get('product_id')
+        product = generics.get_object_or_404(Product, id=product_id, owner=self.request.user)
+
+        if product.images.count()>=6:
+            raise serializers.ValidationError({'error': 'Maximo de 6 imagenes'})
+        
+        serializer.save(product=product)
+
+class ImageProductDeleteView(generics.DestroyAPIView):
+    queryset = ImageProduct.objects.all()
+    serializer_class = ImageProductSerializer
+    permission_classes = [IsAuthenticated, IsVendedor]
+    authentication_classes = [CustomJWTAuthentication]
+
+    def get_queryset(self):
+        return ImageProduct.objects.filter(product__owner=self.request.user)

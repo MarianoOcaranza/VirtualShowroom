@@ -14,14 +14,14 @@ const Header: React.FC = ()=> {
                 <ul className='hidden md:flex space-x-4'>
                     <li><a href="/" className={`p-4 transition-all duration-300 ${location.pathname=='/' ? 'text-indigo-300' : ''} hover:text-indigo-500`}>Inicio</a></li>
                     <li><a href="/products" className={`p-4 transition-all duration-300 ${location.pathname=='/products' ? 'text-indigo-300' : ''} hover:text-indigo-500`}>Productos</a></li>
-                    <li><a href="/about" className={`p-4 transition-all duration-300 ${location.pathname=='/about' ? 'text-indigo-300' : ''} hover:text-indigo-500`}>Sobre Empty</a></li>
+                    <li><a href="/about" className={`p-4 transition-all duration-300 ${location.pathname=='/about' ? 'text-indigo-300' : ''} hover:text-indigo-500`}>Sobre VirtualShowroom</a></li>
                 </ul>                
             </div>
             <div className={`md:hidden transition-all duration-300 overflow-hidden ${isOpen ? 'max-h-40' : 'max-h-0'}`}>
                 <ul className='flex gap-5 flex-col items-center p-4 space-y-2'>
                     <li><a href="/" className={`p-2 pr-4 pl-4 hover:text-indigo-500 transition-all duration-300 ${location.pathname=='/' ? 'text-indigo-300' : ''}`}>Inicio</a></li>
                     <li><a href="/products" className={`p-2 pr-4 pl-4 hover:text-indigo-500 transition-all duration-300 ${location.pathname=='/products' ? 'text-indigo-300' : ''}`}>Productos</a></li>
-                    <li><a href="/contact" className={`p-2 pr-4 pl-4 hover:text-indigo-500 transition-all duration-300 ${location.pathname=='/about' ? 'text-indigo-300' : ''}`}>Sobre Empty</a></li>
+                    <li><a href="/contact" className={`p-2 pr-4 pl-4 hover:text-indigo-500 transition-all duration-300 ${location.pathname=='/about' ? 'text-indigo-300' : ''}`}>Sobre VirtualShowroom</a></li>
                 </ul>           
             </div>         
         </nav>

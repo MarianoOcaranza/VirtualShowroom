@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
-import api from "../services/api";
-import axios from "axios";
+import React from "react";
+import { useNavigate } from "react-router";
 
 interface Product {
     id: number;
@@ -12,48 +11,39 @@ interface Product {
     sizes_available: string;
 }
 
-const ProductList: React.FC = ()=> {
-    const [products, setProducts] = useState<Product[]>([]);
+interface Props {
+    products: Product[];
+    handleDelete: (id: number)=> void
+}
 
-    useEffect(()=> {
-        const fetchProducts = async()=> {
-            const response = await api.get('api/products/');
-            setProducts(response.data);
-        }
-        fetchProducts()
-    },[]);
 
-    const handleDelete = async(id: number)=> {
-        try {
-            const token = localStorage.getItem('jwt_token')
-            if (!token) {
-                console.error('no hay token...')
-                return;
-            }
-            await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/products/${id}/delete/`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            
-            setProducts(prevProducts => prevProducts.filter(product => product.id !== id));
-
-        } catch(error){
-            console.error(error)
-        }
-    }
-
+const ProductList: React.FC<Props> = ({products, handleDelete})=> {
+    const navigate = useNavigate()
     return( 
-        <div className=''>
-            <p>Lista de productos:</p>
-            <ul className='flex flex-col m-10 gap-2'>
-                {products.map(product => (
-                    <li key={product.id} className='flex items-center gap-4 w-full justify-around bg-blue-300'>
-                        {product.name}
-                        <div className="flex gap-4">
-                            <button className='bg-red-400 p-3 hover:bg-red-700 cursor-pointer' onClick={()=> handleDelete(product.id)}>Eliminar</button>
-                            <button className='bg-indigo-400 p-3 hover:bg-indigo-700 cursor-pointer'>Editar</button>
-                        </div>  
+        <div className="w-full max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
+            <ul className="w-full">
+                <li className="flex items-center justify-between bg-gray-800 text-white font-semibold py-3 px-4 rounded-t-lg">
+                <p className="w-1/3 text-center">Nombre</p>
+                <p className="w-1/3 text-center">Precio</p>
+                <p className="w-1/3 text-center">Gestionar</p>
+            </li>
+            
+                {products.map((product, index) => (
+                    <li key={product.id} className={`flex items-center justify-between py-3 px-4 text-gray-800 ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}`}>
+                        <p className="w-1/3 text-center font-medium">{product.name}</p>
+                        <p className="w-1/3 text-center font-semibold">${product.price}</p>
+                        <div className="w-1/3 flex justify-center gap-2">
+                            <button 
+                                className="bg-red-500 text-white cursor-pointer px-3 py-1 rounded-md hover:bg-red-700 transition-all duration-300" 
+                                onClick={() => handleDelete(product.id)}>
+                                Eliminar
+                            </button>
+                            <button 
+                                className="bg-indigo-500 text-white cursor-pointer px-3 py-1 rounded-md hover:bg-indigo-700 transition-all duration-300" 
+                                onClick={() => navigate(`/edit/${product.id}`)}>
+                                Editar
+                            </button>
+                        </div>
                     </li>
                 ))}
             </ul>

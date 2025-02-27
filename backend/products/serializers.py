@@ -20,8 +20,8 @@ class ProductSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         uploaded = validated_data.pop('uploaded', [])
-        if len(uploaded)>6:
-            raise serializers.ValidationError('Maximo 6 imagenes')
+        if len(uploaded)>6 or len(uploaded)<1:
+            raise serializers.ValidationError('Maximo 6 imagenes, minimo 1 imagen')
     
         product = Product.objects.create(**validated_data)
 
@@ -34,8 +34,8 @@ class ProductSerializer(serializers.ModelSerializer):
         uploaded = validated_data.pop('uploaded', None)
 
         if uploaded:
-            if len(uploaded) > 6:
-                raise serializers.ValidationError('Maximo 6 imagenes')
+            if len(uploaded) > 6 or len(uploaded) < 1:
+                raise serializers.ValidationError('Maximo 6 imagenes, minimo 1 imagen')
             instance.images.all().delete()
             for image in uploaded:
                 ImageProduct.objects.create(product=instance, image=image)
