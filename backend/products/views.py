@@ -1,10 +1,10 @@
 from django.shortcuts import render
-from rest_framework import generics, status
-from rest_framework.response import Response
-from .models import Product, ImageProduct
-from .serializers import ProductSerializer, ImageProductSerializer
+from rest_framework import generics
+from .models import Product
+from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from authentication.permissions import IsVendedor
+from authentication.authentication import CustomJWTAuthentication
 
 # Create your views here.
 class ProductListView(generics.ListAPIView):
@@ -33,17 +33,20 @@ class FeaturedListView(generics.ListAPIView):
 class ProductCreateView(generics.CreateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated, IsVendedor]
+    authentication_classes = [CustomJWTAuthentication]
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
 class ProductUpdateView(generics.UpdateAPIView):
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated, IsVendedor]
-
+    authentication_classes = [CustomJWTAuthentication]
     def get_queryset(self):
         return Product.objects.filter(owner=self.request.user)
 
 class ProductDeleteView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsVendedor]
+    authentication_classes = [CustomJWTAuthentication]
+
     def get_queryset(self):
         return Product.objects.filter(owner=self.request.user)

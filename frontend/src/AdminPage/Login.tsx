@@ -1,6 +1,6 @@
-import axios from "axios";
 import React, { useState } from "react"
 import { useNavigate } from "react-router";
+import api from "../services/api";
 
 
 
@@ -17,23 +17,19 @@ const Login: React.FC = ()=> {
         setLoading(true)
         setError(false)
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login/`, {username, password});
-            if(!response.data.is_vendedor) {
-                setError(true)
-                setErrorMessage('No es usuario vendedor!')
-                setLoading(false)
-            } else {
-                const token = response.data.access;
-                localStorage.setItem('jwt_token', token)
-                setError(false)
-                setLoading(false);
-                navigate('/admin')
-            }
-        } catch(error) {
-            console.error('Error', error);
+            await api.post('/api/auth/login/', {username, password}, {withCredentials: true});
+            setError(false)
+            setLoading(false);
+            navigate('/admin')   
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch(error: any) {
             setLoading(false);
             setError(true);
-            setErrorMessage('No se encontro usuario con estas credenciales')
+            if (error.response && error.response.status === 403) {
+                setErrorMessage('No es usuario vendedor!')
+            } else{
+                setErrorMessage('No se encontro usuario con estas credenciales')
+            }
         }
     }
     return (

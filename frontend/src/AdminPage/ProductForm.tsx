@@ -1,5 +1,5 @@
-import axios from "axios";
 import React, { useState } from "react"
+import api from "../services/api";
 
 
 const ProductForm: React.FC = ()=>{
@@ -45,18 +45,10 @@ const ProductForm: React.FC = ()=>{
         formData.images.forEach((file)=> toSend.append('uploaded', file))
 
         try {
-            const token = localStorage.getItem('jwt_token');
-            console.log(token)
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/products/create/`, 
-                toSend,
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "multipart/formdata"
-                },
-            });
+            const response = await api.post(`/api/products/create/`, toSend, {withCredentials: true});
             if (response.status == 201) {
-                alert('Producto creado exitosamente!')                
+                alert('Producto creado exitosamente!') 
+                           
             }
         } catch (error) {
             console.error("Hubo un error", error)
