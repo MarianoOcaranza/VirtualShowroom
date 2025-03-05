@@ -14,12 +14,12 @@ const Selector: React.FC<SelectorProps> = ({onSelectCategory})=> {
     }
 
     return (
-        <div className='bg-pink-300 p-4 md:gap-3 flex justify-center'>
+        <div className='bg-black  p-4 md:gap-3 flex justify-center'>
             {categories.map((category)=> (
                 <button
                     key={category}
                     value={category}
-                    className={`${selected===category ? 'text-indigo-700' : 'text-black'} p-2 font-light cursor-pointer hover:text-indigo-500 transition-all duration-300`}
+                    className={`${selected===category ? 'text-indigo-700' : 'text-white'} p-2 font-light cursor-pointer hover:text-indigo-500 transition-all duration-300`}
                     onClick={()=> handleSelect(category)}
                 >
                     {category}

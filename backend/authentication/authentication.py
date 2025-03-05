@@ -1,4 +1,5 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.exceptions import InvalidToken
 
 
 class CustomJWTAuthentication(JWTAuthentication):
@@ -14,6 +15,6 @@ class CustomJWTAuthentication(JWTAuthentication):
             try:
                 validated_token = self.get_validated_token(jwt_token)
                 return (self.get_user(validated_token), validated_token)
-            except Exception as e:
+            except InvalidToken:
                 return None
         return None

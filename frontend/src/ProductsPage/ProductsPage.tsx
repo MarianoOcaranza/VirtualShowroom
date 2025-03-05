@@ -50,7 +50,7 @@ const ProductsPage: React.FC = ()=> {
         <p>
             {loading ? 'cargando...' : ''}
         </p>
-        <div className='flex gap-4 lg:justify-start justify-center flex-wrap'>
+        <div className='flex gap-4 lg:justify-start mt-5 mx-5 justify-center flex-wrap'>
             {products.map((product)=> (
                 <Product key={product.id} product={product}/>
             ))}

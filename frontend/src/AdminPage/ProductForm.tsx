@@ -95,7 +95,7 @@ const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=
                 </select>
 
                 <input className="border border-gray-300 rounded-md px-4 py-2 w-full focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-                    type="text" name="sizes_available" placeholder="Tamaños (Ej: S, M)" value={formData.sizes_available} onChange={handleChange} required />
+                    type="text" name="sizes_available" placeholder="Talles (Ej: S, M, Único)" value={formData.sizes_available} onChange={handleChange} required />
 
                 <input className="border border-gray-300 rounded-md px-4 py-2 w-full focus:ring-2 focus:ring-indigo-400 focus:outline-none"
                     type="text" name="colors_available" placeholder="Colores (Ej: Negro, Gris)" value={formData.colors_available} onChange={handleChange} required />
