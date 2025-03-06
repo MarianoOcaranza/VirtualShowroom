@@ -1,6 +1,6 @@
 const AboutPage: React.FC = ()=> {
     return (
-        <div className="flex flex-col lg:max-w-1/2 mx-auto justify-center items-center mt-10 bg-white p-8 rounded-lg shadow-lg">
+        <div className="flex flex-col lg:max-w-1/2 mx-auto justify-center items-center mt-3 bg-white p-8 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">Puntos de encuentro</h1>
         <ul className="space-y-2 text-gray-700 mb-6">
             <li className="flex items-center">

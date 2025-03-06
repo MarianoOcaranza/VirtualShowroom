@@ -11,7 +11,7 @@ interface Product {
     category: string;
     is_featured: boolean;
     colors_available: string;
-    images: { id: number; image: string }[];
+    images: { id: number; image_url: string;}[];
 }
 
 const EditProduct = ()=>{
@@ -43,7 +43,7 @@ const EditProduct = ()=>{
     //Se hace la llamada a la API para actualizar el producto
     const handleUpdate = async () => {
         try {
-            await api.put(`api/products/${id}/update/`, product);
+            await api.put(`api/admin/products/${id}/update/`, product);
             navigate("/admin");
         } catch (error) {
             console.error("Error al actualizar el producto", error);
@@ -58,7 +58,7 @@ const EditProduct = ()=>{
             formData.append("image", file);
         }
         try {
-            await api.post(`api/products/${id}/images/add/`, formData, {
+            await api.post(`api/admin/products/${id}/images/add/`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             window.location.reload(); // Recargar para ver las imágenes nuevas
@@ -76,7 +76,7 @@ const EditProduct = ()=>{
             return;
         }
         try {
-            await api.delete(`api/images/${imageId}/delete/`);
+            await api.delete(`api/admin/images/${imageId}/delete/`);
             setProduct((prev) => prev ? { ...prev, images: prev.images.filter(img => img.id !== imageId) } : null);
         } catch (error) {
             console.error("Error al eliminar la imagen", error);
@@ -97,7 +97,7 @@ const EditProduct = ()=>{
             <div>
                 {product.images.map((img) => (
                     <div className='flex h-[80px] gap-1 p-1 justify-center' key={img.id}>
-                        <img src={img.image} alt="Producto" className=" h-full w-1/3 object-cover" />
+                        <img src={img.image_url} alt="Producto" className=" h-full w-1/3 object-cover" />
                         <button className='bg-red-400 text-white font-semibold rounded-md py-2 hover:bg-red-500 transition-all duration-300 cursor-pointer' onClick={() => handleDeleteImage(img.id)}>Eliminar</button>
                     </div>
                 ))}

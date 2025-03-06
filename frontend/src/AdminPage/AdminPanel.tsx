@@ -58,7 +58,7 @@ const AdminPanel: React.FC = ()=> {
             await api.get('/api/auth/user/', {withCredentials: true});
             setIsAuthenticated(true);
             if(confirm('Estas seguro de que queres eliminar el producto?')) {
-                await api.delete(`${import.meta.env.VITE_BACKEND_URL}/api/products/${id}/delete/`, {
+                await api.delete(`${import.meta.env.VITE_BACKEND_URL}/api/admin/products/${id}/delete/`, {
                     withCredentials: true
                 })
                 setProducts(prevProducts => prevProducts.filter(product => product.id !== id));

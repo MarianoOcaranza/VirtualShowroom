@@ -3,7 +3,7 @@ import { useNavigate } from "react-router";
 
 interface ImageProps {
     id: number;
-    image: string;
+    image_url: string;
 }
 interface ProductProps {
     id: number;
@@ -54,7 +54,7 @@ const Product: React.FC<{product: ProductProps}> = ({product}) => {
       >
         {/* Contenedor de la Imagen */}
         <div className="w-full h-2/3">
-          <img src={product.images[index]?.image} alt={product.name} className="w-full h-full object-cover" />
+          <img src={product.images[index]?.image_url} alt={product.name} className="w-full h-full object-cover" />
         </div>
       
         {/* Contenedor de la Información */}

@@ -1,20 +1,40 @@
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from rest_framework import status
+import requests
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
+from backend import settings
 from .permissions import IsVendedor
 from .authentication import CustomJWTAuthentication
 
+def verify_recaptcha(recaptcha_token):
+    url = 'https://www.google.com/recaptcha/api/siteverify'
+    payload = {
+        'secret': settings.RECAPTCHA_SECRET,
+        'response': recaptcha_token
+    }
+    response = requests.post(url, data=payload)
+    result = response.json()
+    return result.get('success') and result.get('score', 0) >= 0.5
 
-# Create your views here.
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
+
     def post(self, request):
+         
+        if getattr(request, 'limited', False):
+            return Response({'error': 'demasiadas solicitudes'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+
         username = request.data.get('username')
         password = request.data.get('password')
+        recaptcha_token = request.data.get('recaptcha-token')
+       
+
+        if not verify_recaptcha(recaptcha_token):
+            return Response({'error': 'reCAPTCHA failed'})
         
         if not username or not password:
             return Response({"error": "Se requiere nombre de usuario y contraseña"},

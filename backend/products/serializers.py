@@ -1,12 +1,19 @@
 from rest_framework import serializers
 from .models import Product, ImageProduct
+from cloudinary.models import CloudinaryField
 
 
 class ImageProductSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+    
     class Meta:
         model = ImageProduct
-        fields = ['id', 'image']
+        fields = ['id', 'image_url', 'public_id']
 
+    def get_image_url(self, obj):
+        if hasattr(obj.image, 'url'):  # Verifica si tiene el atributo 'url'
+            return obj.image.url  # Devuelve la URL completa
+        return None
 
 class ProductSerializer(serializers.ModelSerializer):
     images = ImageProductSerializer(many=True, read_only=True)

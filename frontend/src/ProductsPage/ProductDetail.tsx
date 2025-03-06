@@ -4,7 +4,7 @@ import api from "../services/api";
 
 interface ImageProps {
     id: number;
-    image: string;
+    image_url: string;
 }
 interface ProductDetailProps {
     id: number;
@@ -51,7 +51,7 @@ const ProductDetail: React.FC = ()=> {
     return (
         <>
         <div className="w-full max-w-3xl gap-10 items-center mx-auto flex flex-col md:flex-row mt-10 mb-10">
-            <img src={product.images[index].image} className='w-md md:w-1/2 h-96 flex object-cover shadow-lg overflow-hidden' alt="" />
+            <img src={product.images[index].image_url} className='w-md md:w-1/2 h-96 flex object-cover shadow-lg overflow-hidden' alt="" />
             <div className='md:w-1/2 w-xs'>
                 <p className='text-3xl font-bold'>{product.name}</p>
                 <p className='text-xl font-extralight'>${product.price}</p>

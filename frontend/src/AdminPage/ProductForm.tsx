@@ -58,7 +58,7 @@ const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=
         formData.images.forEach((file)=> toSend.append('uploaded', file))
 
         try {
-            const response = await api.post(`/api/products/create/`, toSend, {withCredentials: true});
+            const response = await api.post(`/api/admin/products/create/`, toSend, {withCredentials: true});
             if (response.status == 201) {
                 const newProduct = response.data
                 onProductCreated(newProduct)

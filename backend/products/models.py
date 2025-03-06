@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from cloudinary.models import CloudinaryField
 
 # Create your models here.
 class Product(models.Model):
@@ -23,7 +24,7 @@ class Product(models.Model):
 
 class ImageProduct(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='product_images/', verbose_name='Imagen')
+    image = CloudinaryField('image')
 
     class Meta:
         verbose_name = 'Imagen del producto'
@@ -31,3 +32,7 @@ class ImageProduct(models.Model):
 
     def __str__(self):
         return f'Imagen de {self.product.name}'
+
+    @property
+    def public_id(self):
+        return self.image.public_id.split('/')[-1] if self.image else None

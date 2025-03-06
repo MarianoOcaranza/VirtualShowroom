@@ -1,8 +1,8 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useNavigate } from "react-router";
 import api from "../services/api";
-
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+declare const window: any;
 
 const Login: React.FC = ()=> {
     const [username, setUsername] = useState('')
@@ -12,12 +12,24 @@ const Login: React.FC = ()=> {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [recaptchaToken, setRecaptchaToken] = useState('');
+
+    useEffect(() => {
+        if (window.grecaptcha) {
+            window.grecaptcha.ready(() => {
+            });
+        }
+    }, []);
+    
     const handleLogin = async(e : React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         setError(false)
         try {
-            await api.post('/api/auth/login/', {username, password}, {withCredentials: true});
+            const token = await window.grecaptcha.execute('6LfMzesqAAAAAN5dgy-BQUWUfjWYrgSpVq73l1-X', { action: 'login' });
+            setRecaptchaToken(token)
+            await api.post('/api/auth/login/', {username, password, 'recaptcha-token': token}, {withCredentials: true});
             setError(false)
             setLoading(false);
             navigate('/admin')   
@@ -59,6 +71,7 @@ const Login: React.FC = ()=> {
             <p>{loading ? 'Cargando...' : ''}</p>
             </form>
         </div>
+        
     )
 }
 
