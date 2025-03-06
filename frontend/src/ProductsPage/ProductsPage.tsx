@@ -34,7 +34,7 @@ const ProductsPage: React.FC = ()=> {
                 if (category !== 'Todo') {
                     url += `/?category=${category.toLowerCase()}`;
                 }
-                const { data } = await api.get(url);
+                const { data } = await api.get(url, {withCredentials: false});
                 setProducts(data);
             } catch (error) {
                 console.log('Error obteniendo los productos: ', error);

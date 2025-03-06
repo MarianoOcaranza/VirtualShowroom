@@ -27,7 +27,7 @@ const ProductDetail: React.FC = ()=> {
     useEffect(()=> {
         const getProducts = async ()=> {
             try {
-                const { data } = await api.get(`/api/products/${id}`)
+                const { data } = await api.get(`/api/products/${id}`, {withCredentials: false})
                 setProduct(data);
             } catch (error) {
                 console.log('Hubo un error al obtener el detalle del producto: ', error);

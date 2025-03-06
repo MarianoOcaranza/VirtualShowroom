@@ -25,7 +25,7 @@ const FeaturedProducts: React.FC = ()=> {
         const getProducts = async ()=> {
             setLoading(true)
             try {
-                const { data } = await api.get('/api/products/featured');
+                const { data } = await api.get('/api/products/featured', {withCredentials: false});
                 setProducts(data)
             } catch (error) {
                 console.log('Error obteniendo los productos destacados: ', error)
