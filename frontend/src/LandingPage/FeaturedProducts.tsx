@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Product from "../ProductsPage/Product";
-import axios from "axios";
+import api from "../services/api";
 
 interface ImageProps {
     id: number;
@@ -25,11 +25,10 @@ const FeaturedProducts: React.FC = ()=> {
         const getProducts = async ()=> {
             setLoading(true)
             try {
-                const url = `${import.meta.env.VITE_BACKEND_URL}/api/products/featured`
-                const { data } = await axios.get(url);
+                const { data } = await api.get('/api/products/featured');
                 setProducts(data)
             } catch (error) {
-                console.log('error con productos destacados', error)
+                console.log('Error obteniendo los productos destacados: ', error)
             } finally {
                 setLoading(false)
             }
@@ -39,9 +38,10 @@ const FeaturedProducts: React.FC = ()=> {
 
     return(
         <>
-        <p>
-            {loading ? 'cargando...' : ''}
-        </p>
+        {loading ?  
+        <div className='flex gap-4 justify-center flex-wrap'>
+            <p>Cargando productos...</p>
+        </div>  : ''}
         <div className='flex gap-4 justify-center flex-wrap'>
             {products.map((product)=> (
                 <Product key={product.id} product={product}/>

@@ -20,6 +20,7 @@ const EditProduct = ()=>{
     const [product, setProduct] = useState<Product | null>(null);
     const [newImages, setNewImages] = useState<FileList | null>(null);
 
+    //Para obtener el producto a editar
     useEffect(()=>{
         const getProduct = async()=> {
             try {
@@ -32,12 +33,14 @@ const EditProduct = ()=>{
         getProduct();
     }, [id]);
 
+    //Para manejar los cambios en el form y setearlo como propiedad del producto
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (product) {
             setProduct({...product, [e.target.name]: e.target.value})
         }
     }
 
+    //Se hace la llamada a la API para actualizar el producto
     const handleUpdate = async () => {
         try {
             await api.put(`api/products/${id}/update/`, product);
@@ -47,10 +50,11 @@ const EditProduct = ()=>{
         }
     };
 
+    //Agregar imagenes (a traves de otra API para poder almacenar mas de una imagen por producto)
     const handleAddImages = async () => {
         if (!newImages) return;
         const formData = new FormData();
-        for (const file of newImages) {
+        for(const file of newImages) {
             formData.append("image", file);
         }
         try {
@@ -97,6 +101,12 @@ const EditProduct = ()=>{
                         <button className='bg-red-400 text-white font-semibold rounded-md py-2 hover:bg-red-500 transition-all duration-300 cursor-pointer' onClick={() => handleDeleteImage(img.id)}>Eliminar</button>
                     </div>
                 ))}
+            {
+                (newImages && newImages.length > 0) && 
+                <div>
+                    <p>Hay imagenes nuevas... Click en confirmar para subirlas</p>
+                </div>
+            }
             </div>
             <label htmlFor='imageinput' className='border border-gray-300 rounded-md px-4 py-2 w-full text-center text-indigo-600 font-medium cursor-pointer hover:bg-indigo-100 transition'>
             Subir nuevas imagenes<input id='imageinput' className='hidden' type="file" multiple onChange={(e) => setNewImages(e.target.files)} />

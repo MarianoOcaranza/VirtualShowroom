@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router"
+import api from "../services/api";
 
 interface ImageProps {
     id: number;
@@ -23,19 +23,20 @@ const ProductDetail: React.FC = ()=> {
     const [product, setProduct] = useState<ProductDetailProps | null>(null);
     const [index, setIndex] = useState(0)
 
+    //Llamada a la API para obtener el detalle de producto
     useEffect(()=> {
         const getProducts = async ()=> {
             try {
-                const url = `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`;
-                const { data } = await axios.get(url)
+                const { data } = await api.get(`/api/products/${id}`)
                 setProduct(data);
             } catch (error) {
-                console.log('errorrrrrr', error);
+                console.log('Hubo un error al obtener el detalle del producto: ', error);
             }
         };
         getProducts()
     }, [id])
 
+    //Efecto para cambiar las imagenes cada 2 segundos
     useEffect(()=> {
         const interval = setInterval(() => {
             setIndex((prevIndex) => (prevIndex+1) % product!.images.length)
@@ -43,7 +44,7 @@ const ProductDetail: React.FC = ()=> {
         return ()=> clearInterval(interval);
     }, [product]);
 
-    //Condicional necesario para manejar el asincronismo
+    //Condicional necesario para manejar el asincronismo, esperar a que cargue el producto
     if (!product) {
         return <p>Cargando...</p>
     }

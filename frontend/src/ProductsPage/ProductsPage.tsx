@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Selector from "./Selector"
 import Product from "./Product";
-import axios from "axios";
+import api from "../services/api";
 
 interface ImageProps {
     id: number;
@@ -23,18 +23,21 @@ const ProductsPage: React.FC = ()=> {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(false);
 
+
+    //Llamada a la API para obtener los productos
     useEffect(()=> {
         const getProducts = async ()=> {
             setLoading(true);
             try {
-                let url = `${import.meta.env.VITE_BACKEND_URL}/api/products`;
+                let url = '/api/products';
+                //Filtrar segun categoria seleccionada
                 if (category !== 'Todo') {
                     url += `/?category=${category.toLowerCase()}`;
                 }
-                const { data } = await axios.get(url);
+                const { data } = await api.get(url);
                 setProducts(data);
             } catch (error) {
-                console.log('errorrrr: ', error);
+                console.log('Error obteniendo los productos: ', error);
             } finally {
                 setLoading(false);
             }
@@ -47,9 +50,10 @@ const ProductsPage: React.FC = ()=> {
     return (
     <>
         <Selector onSelectCategory={setCategory}/>
-        <p>
-            {loading ? 'cargando...' : ''}
-        </p>
+        {loading ?  
+        <div className='flex gap-4 justify-center flex-wrap'>
+            <p>Cargando productos...</p>
+        </div>  : ''}
         <div className='flex gap-4 lg:justify-start mt-5 mx-5 justify-center flex-wrap'>
             {products.map((product)=> (
                 <Product key={product.id} product={product}/>

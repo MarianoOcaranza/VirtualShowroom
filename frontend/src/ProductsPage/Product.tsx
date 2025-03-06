@@ -21,14 +21,17 @@ const Product: React.FC<{product: ProductProps}> = ({product}) => {
     const intervalRef = useRef<number | null>(null);
 
 
+    //Cambiar imagenes cuando se pose el mouse encima
     const handleHover = ()=> {
+        //Reiniciar el intervalo cada vez que se ponga el mouse encima
         if (intervalRef.current !== null) return;
-
+        //Cambiar imagenes cada 1 segundo
         intervalRef.current = window.setInterval(()=> {
             setIndex((prevIndex)=> (prevIndex + 1) % product.images.length)
         }, 1000);
     };
 
+    //Volver a la primera imagen cuando se quita el mouse
     const handleMouseLeave = ()=> {
         if (intervalRef.current !== null) {
             clearInterval(intervalRef.current);
@@ -37,6 +40,7 @@ const Product: React.FC<{product: ProductProps}> = ({product}) => {
         setIndex(0);
     }
 
+    //Navegar al detalle del producto
     const handleClick = ()=> {
         navigate(`/products/${product.id}`)
     }
@@ -67,7 +71,6 @@ const Product: React.FC<{product: ProductProps}> = ({product}) => {
       </div>
       
     )
-
 }
 
 export default Product
