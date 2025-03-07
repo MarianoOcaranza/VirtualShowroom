@@ -5,7 +5,7 @@ import api from "../services/api";
 
 interface ImageProps {
     id: number;
-    image: string;
+    image_url: string;
 }
 interface Product {
     id: number;
@@ -54,7 +54,7 @@ const ProductsPage: React.FC = ()=> {
         <div className='flex gap-4 justify-center flex-wrap'>
             <p>Cargando productos...</p>
         </div>  : ''}
-        <div className='flex gap-4 lg:justify-start mt-5 mx-5 justify-center flex-wrap'>
+        <div className='flex gap-4 mt-5 mx-5 justify-center flex-wrap'>
             {products.map((product)=> (
                 <Product key={product.id} product={product}/>
             ))}

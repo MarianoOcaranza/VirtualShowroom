@@ -1,18 +1,22 @@
+import cloudinary
 from rest_framework import serializers
 from .models import Product, ImageProduct
-from cloudinary.models import CloudinaryField
 
 
 class ImageProductSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
-    
+    public_id = serializers.SerializerMethodField()
+
     class Meta:
         model = ImageProduct
         fields = ['id', 'image_url', 'public_id']
 
     def get_image_url(self, obj):
-        if hasattr(obj.image, 'url'):  # Verifica si tiene el atributo 'url'
-            return obj.image.url  # Devuelve la URL completa
+        return obj.image.url if obj.image else None
+    
+    def get_public_id(self, obj):
+        if obj.image and isinstance(obj.image, str):
+            return obj.image.split("/")[-1].split(".")[0]
         return None
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -27,8 +31,12 @@ class ProductSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         uploaded = validated_data.pop('uploaded', [])
-        if len(uploaded)>6 or len(uploaded)<1:
-            raise serializers.ValidationError('Maximo 6 imagenes, minimo 1 imagen')
+
+        if not uploaded:
+            raise serializers.ValidationError("Debes subir al menos una imagen")
+        
+        if len(uploaded)>6:
+            raise serializers.ValidationError('Maximo 6 imagenes')
     
         product = Product.objects.create(**validated_data)
 
@@ -43,8 +51,17 @@ class ProductSerializer(serializers.ModelSerializer):
         if uploaded:
             if len(uploaded) > 6 or len(uploaded) < 1:
                 raise serializers.ValidationError('Maximo 6 imagenes, minimo 1 imagen')
-            instance.images.all().delete()
-            for image in uploaded:
-                ImageProduct.objects.create(product=instance, image=image)
             
+            for image in uploaded:
+                try:
+                    upload_result = cloudinary.uploader.upload(image, folder="Empty showroom")
+                    image_url = upload_result.get('secure_url')
+
+                    if not image_url:
+                        raise serializers.ValidationError({"error": "Error al subir la imagen a Cloudinary."})
+
+                    ImageProduct.objects.create(product=instance, image=image_url)
+                except Exception as e:
+                    raise serializers.ValidationError({"error": f"Error al subir imagen: {str(e)}"})
+
         return super().update(instance, validated_data)

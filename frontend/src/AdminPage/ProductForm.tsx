@@ -12,6 +12,7 @@ interface Product {
 }
 
 const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=> void})=>{
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -28,7 +29,8 @@ const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=
           [e.target.name]: e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value,
         });
       };
-      
+    
+    //File change
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
             const newFiles = Array.from(e.target.files);
@@ -44,9 +46,10 @@ const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=
     };
     
 
-      const handleSubmit = async(e: React.FormEvent) => {
+    //Submit
+    const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault();
-        
+
         const toSend = new FormData();
         toSend.append('name', formData.name);
         toSend.append('description', formData.description)
@@ -55,17 +58,30 @@ const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=
         toSend.append('sizes_available', formData.sizes_available)
         toSend.append('colors_available', formData.colors_available)
         toSend.append('is_featured', String(formData.is_featured))
+
         formData.images.forEach((file)=> toSend.append('uploaded', file))
 
         try {
+            setLoading(true)
             const response = await api.post(`/api/admin/products/create/`, toSend, {withCredentials: true});
             if (response.status == 201) {
                 const newProduct = response.data
                 onProductCreated(newProduct)
-                alert('Producto creado exitosamente!') 
-                
+                alert('Producto creado exitosamente!')
+                setLoading(false)
+                setFormData({
+                    name: '',
+                    description: '',
+                    price: '',
+                    category: '',
+                    sizes_available: '',
+                    colors_available: '',
+                    is_featured: false,
+                    images: [],
+                });
             }
         } catch (error) {
+            setLoading(false)
             console.error("Hubo un error", error)
         }
       }
@@ -86,7 +102,7 @@ const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=
                     type="number" name="price" placeholder="Precio" value={formData.price} onChange={handleChange} required />
 
                 <select className="border border-gray-300 rounded-md px-4 py-2 w-full bg-white focus:ring-2 focus:ring-indigo-400 focus:outline-none"
-                        name="category" value={formData.category} onChange={handleChange} required>
+                        name="category" value={formData.category} onChange={handleChange}>
                     <option value="">Selecciona una categoría</option>
                     <option value="Remeras">Remeras</option>
                     <option value="Pantalones">Pantalones</option>
@@ -101,8 +117,19 @@ const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=
                     type="text" name="colors_available" placeholder="Colores (Ej: Negro, Gris)" value={formData.colors_available} onChange={handleChange} required />
 
                 <label htmlFor='imageinput' className="border border-gray-300 rounded-md px-4 py-2 w-full text-center text-indigo-600 font-medium cursor-pointer hover:bg-indigo-100 transition">
-                    Click aquí para subir imágenes
-                    <input id='imageinput' className="hidden" type="file" multiple accept="image/*" onChange={handleFileChange} required />
+                    Click aquí para subir imágenes (Minimo una, sino no se subirá el producto)
+                    <input id='imageinput' className="hidden" name="images" type="file" multiple accept="image/*" onChange={handleFileChange} />
+                    {/*Images preview*/}
+                    <div className="flex space-x-2 mt-2">
+                        {formData.images.map((file, index) => (
+                        <img
+                            key={index}
+                            src={URL.createObjectURL(file)}
+                            alt={`preview-${index}`}
+                            className="w-20 h-20 object-cover rounded"
+                        />
+                    ))}
+                    </div>
                 </label>
 
                 <label className="flex items-center space-x-3 cursor-pointer">
@@ -111,9 +138,9 @@ const ProductForm = ({onProductCreated}: { onProductCreated: (product: Product)=
                     <span className="text-gray-700">Destacar Producto</span>
                 </label>
 
-                <button className="bg-indigo-600 cursor-pointer text-white font-semibold rounded-md py-2 hover:bg-indigo-700 transition-all duration-300"
-                        type="submit">
-                    Crear Producto
+                <button className="bg-indigo-600 disabled:bg-gray-400 cursor-pointer text-white font-semibold rounded-md py-2 hover:bg-indigo-700 transition-all duration-300"
+                        type="submit" disabled={loading}>
+                    {loading ? 'Creando...' : 'Crear producto'}
                 </button>
             </form>
         </div>

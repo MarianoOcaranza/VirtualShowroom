@@ -24,7 +24,7 @@ class Product(models.Model):
 
 class ImageProduct(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
-    image = CloudinaryField('image')
+    image = CloudinaryField('image', folder='Empty showroom')
 
     class Meta:
         verbose_name = 'Imagen del producto'
@@ -34,5 +34,11 @@ class ImageProduct(models.Model):
         return f'Imagen de {self.product.name}'
 
     @property
+    def image_url(self):
+        return self.image.url if self.image else None
+    
+    @property
     def public_id(self):
-        return self.image.public_id.split('/')[-1] if self.image else None
+        if self.image and isinstance(self.image, str):
+            return self.image.public_id.split('/')[-1] if self.image else None
+        return None
