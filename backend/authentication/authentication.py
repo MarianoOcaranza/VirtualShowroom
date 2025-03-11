@@ -1,20 +1,23 @@
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.exceptions import InvalidToken
+from rest_framework.exceptions import AuthenticationFailed
+
 
 
 class CustomJWTAuthentication(JWTAuthentication):
     def authenticate(self, request):
-
+        # Intenta autenticar usando la cabecera (Bearer Token)
         header_auth = super().authenticate(request)
         if header_auth:
             return header_auth
 
+        # Si no hay header, busca el token en las cookies
         jwt_token = request.COOKIES.get("jwt_token")
+        if not jwt_token:
+            return None
 
-        if jwt_token:
-            try:
-                validated_token = self.get_validated_token(jwt_token)
-                return (self.get_user(validated_token), validated_token)
-            except InvalidToken:
-                return None
-        return None
+        try:
+            validated_token = self.get_validated_token(jwt_token)
+            return (self.get_user(validated_token), validated_token)
+        except InvalidToken:
+            raise AuthenticationFailed("Token inválido o expirado")

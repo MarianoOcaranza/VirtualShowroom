@@ -1,24 +1,12 @@
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from rest_framework import status
-import requests
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from backend import settings
 from .permissions import IsVendedor
 from .authentication import CustomJWTAuthentication
-
-def verify_recaptcha(recaptcha_token):
-    url = 'https://www.google.com/recaptcha/api/siteverify'
-    payload = {
-        'secret': settings.RECAPTCHA_SECRET,
-        'response': recaptcha_token
-    }
-    response = requests.post(url, data=payload)
-    result = response.json()
-    return result.get('success') and result.get('score', 0) >= 0.5
-
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -30,11 +18,6 @@ class LoginView(APIView):
 
         username = request.data.get('username')
         password = request.data.get('password')
-        recaptcha_token = request.data.get('recaptcha-token')
-       
-
-        if not verify_recaptcha(recaptcha_token):
-            return Response({'error': 'reCAPTCHA failed'})
         
         if not username or not password:
             return Response({"error": "Se requiere nombre de usuario y contraseña"},
@@ -64,14 +47,14 @@ class LoginView(APIView):
         return response
     
 class UserView(APIView):
-    authentication_classes = [CustomJWTAuthentication, IsVendedor]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [CustomJWTAuthentication]
+    permission_classes = [IsAuthenticated, IsVendedor]
     def get(self, request):
         return Response({"username": request.user.username, "email": request.user.email, "is_vendedor": request.user.is_vendedor()})
     
 class LogoutView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
     def post(self, request):
         response = Response({"message": "logout exitoso"}, status=status.HTTP_200_OK)
         response.delete_cookie('jwt_token')

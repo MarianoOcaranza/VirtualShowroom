@@ -1,4 +1,3 @@
-import cloudinary
 from django.shortcuts import render
 from rest_framework import generics
 from .models import Product, ImageProduct
@@ -6,9 +5,6 @@ from .serializers import ProductSerializer, ImageProductSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from authentication.permissions import IsVendedor
 from authentication.authentication import CustomJWTAuthentication
-from rest_framework import serializers
-from rest_framework.parsers import MultiPartParser, FormParser
-from cloudinary.uploader import destroy
 
 
 # Create your views here.
