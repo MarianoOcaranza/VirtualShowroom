@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
 import Product from "../ProductsPage/Product";
-import api from "../services/api";
+import {api} from "../services/api";
+import { useQuery } from "@tanstack/react-query";
 
 interface ImageProps {
     id: number;
-    image: string;
+    image_url: string;
 }
 interface Product {
     id: number;
@@ -17,28 +17,24 @@ interface Product {
     sizes_available: string;
 }
 
+const getFeaturedProducts = async() => {
+    const {data} = await api.get(`products/featured`)
+    return data;
+}
 const FeaturedProducts: React.FC = ()=> {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(false)
 
-    useEffect(()=> {
-        const getProducts = async ()=> {
-            setLoading(true)
-            try {
-                const { data } = await api.get('/api/products/featured', {withCredentials: false});
-                setProducts(data)
-            } catch (error) {
-                console.log('Error obteniendo los productos destacados: ', error)
-            } finally {
-                setLoading(false)
-            }
-        }
-        getProducts()
-    }, [])
+    const { data: products = [], isLoading } = useQuery<Product[]>({
+        queryKey: ['featuredProducts'], 
+        queryFn: () => getFeaturedProducts(), 
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 10,
+        retry: false,
+        refetchOnWindowFocus: false,
+    });
 
     return(
         <>
-        {loading ?  
+        {isLoading ?  
         <div className='flex gap-4 justify-center flex-wrap'>
             <p>Cargando productos...</p>
         </div>  : ''}

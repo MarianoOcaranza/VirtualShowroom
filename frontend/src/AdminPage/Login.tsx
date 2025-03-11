@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react"
+import React, {useState } from "react"
 import { useNavigate } from "react-router";
-import api from "../services/api";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-declare const window: any;
+import { useAuthStore } from "./store/authStore";
 
 const Login: React.FC = ()=> {
     const [username, setUsername] = useState('')
@@ -11,27 +9,17 @@ const Login: React.FC = ()=> {
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [recaptchaToken, setRecaptchaToken] = useState('');
-
-    useEffect(() => {
-        if (window.grecaptcha) {
-            window.grecaptcha.ready(() => {
-            });
-        }
-    }, []);
+    const {login, checkAuth} = useAuthStore()
     
     const handleLogin = async(e : React.FormEvent) => {
         e.preventDefault()
         setLoading(true)
         setError(false)
         try {
-            const token = await window.grecaptcha.execute('6LfMzesqAAAAAN5dgy-BQUWUfjWYrgSpVq73l1-X', { action: 'login' });
-            setRecaptchaToken(token)
-            await api.post('/api/auth/login/', {username, password, 'recaptcha-token': token}, {withCredentials: true});
-            setError(false)
-            setLoading(false);
+            await login(username, password)
+            console.log('login exitoso')
+            await checkAuth()
+            console.log('auth verificado')
             navigate('/admin')   
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch(error: any) {
@@ -39,9 +27,11 @@ const Login: React.FC = ()=> {
             setError(true);
             if (error.response && error.response.status === 403) {
                 setErrorMessage('No es usuario vendedor!')
-            } else{
+            } else if(error.message === 'Credenciales incorrectas') {
                 setErrorMessage('No se encontro usuario con estas credenciales')
             }
+        } finally {
+            setLoading(false)
         }
     }
     return (

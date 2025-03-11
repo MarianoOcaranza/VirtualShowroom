@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import Selector from "./Selector"
 import Product from "./Product";
-import api from "../services/api";
+import {api} from "../services/api";
+import {useQuery} from '@tanstack/react-query'
 
 interface ImageProps {
     id: number;
@@ -18,39 +19,25 @@ interface Product {
     sizes_available: string;
 }
 
+const getProducts = async(category: string): Promise<Product[]> => {
+    const endpoint = category === "Todo" ? "products/" : `products/?category=${category.toLowerCase()}`
+    const {data} = await api.get(endpoint)
+    return data
+}
+
 const ProductsPage: React.FC = ()=> {
     const [category, setCategory] = useState('Todo');
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(false);
 
-
-    //Llamada a la API para obtener los productos
-    useEffect(()=> {
-        const getProducts = async ()=> {
-            setLoading(true);
-            try {
-                let url = '/api/products';
-                //Filtrar segun categoria seleccionada
-                if (category !== 'Todo') {
-                    url += `/?category=${category.toLowerCase()}`;
-                }
-                const { data } = await api.get(url, {withCredentials: false});
-                setProducts(data);
-            } catch (error) {
-                console.log('Error obteniendo los productos: ', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        getProducts();
-    }, [category]);
-
-
+    const {data: products = [], isLoading} = useQuery<Product[]>({
+        queryKey: ["products", category],
+        queryFn: ()=> getProducts(category),
+        staleTime: 1000*60*5,
+    })
     
     return (
     <>
         <Selector onSelectCategory={setCategory}/>
-        {loading ?  
+        {isLoading ?  
         <div className='flex gap-4 justify-center flex-wrap'>
             <p>Cargando productos...</p>
         </div>  : ''}

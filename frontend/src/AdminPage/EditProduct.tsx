@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router"
-import api from "../services/api";
+import {api, adminApi} from "../services/api";
 
 interface Product {
     id: number;
@@ -23,7 +23,7 @@ const EditProduct = ()=>{
     useEffect(()=>{
         const getProduct = async()=> {
             try {
-                const response = await api.get(`/api/products/${id}/`, {withCredentials: true});
+                const response = await api.get(`products/${id}/`, {withCredentials: true});
                 setProduct(response.data);
             } catch (error) {
                 console.error('Error al obtener el producto ', error);
@@ -76,7 +76,7 @@ const EditProduct = ()=>{
         newImages.forEach((file) => formData.append('uploaded', file));
 
         try {
-            await api.put(`/api/admin/products/${id}/update/`, formData, {
+            await adminApi.put(`products/${id}/update/`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
                 withCredentials: true,
             });
@@ -98,7 +98,7 @@ const EditProduct = ()=>{
             return;
         }
         try {
-            await api.delete(`/api/admin/images/${imageId}/delete/`);
+            await adminApi.delete(`images/${imageId}/delete/`);
             setProduct((prev) => prev ? { ...prev, images: prev.images.filter(img => img.id !== imageId) } : null);
         } catch (error) {
             console.error("Error al eliminar la imagen", error);

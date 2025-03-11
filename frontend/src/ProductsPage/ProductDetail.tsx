@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router"
-import api from "../services/api";
+import {api} from "../services/api";
+import { useQuery } from "@tanstack/react-query";
 
 interface ImageProps {
     id: number;
@@ -18,36 +19,44 @@ interface ProductDetailProps {
     created_at: string;
 }
 
+const getProductDetail = async(id: string) => {
+    const {data} = await api.get(`products/${id}`)
+    return data;
+}
+
 const ProductDetail: React.FC = ()=> {
     const {id} = useParams<{id: string}>();
-    const [product, setProduct] = useState<ProductDetailProps | null>(null);
     const [index, setIndex] = useState(0)
 
-    //Llamada a la API para obtener el detalle de producto
-    useEffect(()=> {
-        const getProducts = async ()=> {
-            try {
-                const { data } = await api.get(`/api/products/${id}`, {withCredentials: false})
-                setProduct(data);
-            } catch (error) {
-                console.log('Hubo un error al obtener el detalle del producto: ', error);
-            }
-        };
-        getProducts()
-    }, [id])
+    const { data: product } = useQuery<ProductDetailProps>({
+        queryKey: ['productDetail', id], 
+        queryFn: () => getProductDetail(id!), 
+        staleTime: 1000 * 60 * 5,
+        enabled: !!id,
+        gcTime: 1000 * 60 * 10,
+        retry: false,
+        refetchOnWindowFocus: false,
+    });
 
-    //Efecto para cambiar las imagenes cada 2 segundos
-    useEffect(()=> {
-        const interval = setInterval(() => {
-            setIndex((prevIndex) => (prevIndex+1) % product!.images.length)
-        }, 2000)
-        return ()=> clearInterval(interval);
+    useEffect(() => {
+        if (product?.images?.length) {
+            const interval = setInterval(() => {
+                setIndex((prevIndex) => (prevIndex + 1) % product.images.length);
+            }, 2000);
+            return () => clearInterval(interval);
+        }
     }, [product]);
 
-    //Condicional necesario para manejar el asincronismo, esperar a que cargue el producto
+    
     if (!product) {
-        return <p>Cargando...</p>
+        return (
+        <>
+            <p>No se encontró el producto.</p>
+            <a href="/products" className="underline text-blue-700">Volver</a>
+        </>
+        )
     }
+
     return (
         <>
         <div className="w-full max-w-3xl gap-10 items-center mx-auto flex flex-col md:flex-row mt-10 mb-10">
