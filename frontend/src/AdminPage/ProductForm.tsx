@@ -2,9 +2,19 @@ import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminApi } from "../services/api";
 
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    category: string;
+    is_featured: boolean;
+    colors_available: string;
+    sizes_available: string;
+}
 
 const createProduct = async (formData: FormData) => {
-    return await adminApi.post("products/create/", formData, { withCredentials: true });
+    const response = await adminApi.post("products/create/", formData, { withCredentials: true });
+    return response.data
 };
 
 const ProductForm = () => {
@@ -12,9 +22,21 @@ const ProductForm = () => {
     
     const mutation = useMutation({
         mutationFn: createProduct,
-        onSuccess: () => {
-            alert("Producto creado exitosamente!");
-            queryClient.invalidateQueries({queryKey: ["products"]});
+        onSuccess: (newProduct) => {
+            alert("Producto creado exitosamente!")
+            queryClient.setQueryData(['products'], (oldData: Product[] | undefined)=> {
+                return oldData ? [...oldData, newProduct] : [newProduct]
+            })
+            setFormData({
+                name: "",
+                description: "",
+                price: "",
+                category: "",
+                sizes_available: "",
+                colors_available: "",
+                is_featured: false,
+                images: [] as File[],
+            })
         },
         onError: (error) => {
             console.error("Hubo un error", error);
@@ -58,6 +80,11 @@ const ProductForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (formData.images.length == 0 ) {
+            alert('No podes subir un producto sin imagenes!')
+            return;
+        }
+        
         const toSend = new FormData();
         toSend.append("name", formData.name);
         toSend.append("description", formData.description);

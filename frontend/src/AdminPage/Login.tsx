@@ -25,10 +25,12 @@ const Login: React.FC = ()=> {
         } catch(error: any) {
             setLoading(false);
             setError(true);
-            if (error.response && error.response.status === 403) {
+            if (error.message === 'Usuario no vendedor') {
                 setErrorMessage('No es usuario vendedor!')
             } else if(error.message === 'Credenciales incorrectas') {
                 setErrorMessage('No se encontro usuario con estas credenciales')
+            } else {
+                setErrorMessage('Error no conocido (unhandled). Contacta a su administrador!')
             }
         } finally {
             setLoading(false)

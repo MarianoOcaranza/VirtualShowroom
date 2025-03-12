@@ -6,6 +6,15 @@ import {api, adminApi} from "../services/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuthStore } from "./store/authStore";
 
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    category: string;
+    is_featured: boolean;
+    colors_available: string;
+    sizes_available: string;
+}
 const fetchProducts = async ()=> {
     const response = await api.get('products/')
     return response.data;
@@ -16,11 +25,12 @@ const AdminPanel: React.FC = ()=> {
     const {isAuthenticated, checkAuth, logout} = useAuthStore();
     const queryClient = useQueryClient()
 
-
     const {data: products, isLoading} = useQuery({
         queryKey: ['products'],
         queryFn: fetchProducts,
-        enabled: isAuthenticated === true
+        enabled: isAuthenticated === true,
+        staleTime: 1000 * 60 * 5,
+        gcTime: 1000 * 60 * 10
     })
 
     const deleteMutation = useMutation({
@@ -29,8 +39,14 @@ const AdminPanel: React.FC = ()=> {
                 withCredentials: true
             })
         },
-        onSuccess: ()=> {
-            queryClient.invalidateQueries({queryKey: ['products']});
+        onMutate: (id: number)=> {
+            const previousProducts = queryClient.getQueryData<Product[]>(['products']);
+            if (previousProducts) {
+                queryClient.setQueryData(
+                    ['products'],
+                    previousProducts.filter(product => product.id !== id)
+                );
+            }
         }
     })
 

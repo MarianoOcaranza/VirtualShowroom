@@ -32,6 +32,7 @@ const ProductsPage: React.FC = ()=> {
         queryKey: ["products", category],
         queryFn: ()=> getProducts(category),
         staleTime: 1000*60*5,
+        gcTime: 1000 * 60 * 10
     })
     
     return (
