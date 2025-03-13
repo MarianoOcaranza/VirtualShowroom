@@ -16,7 +16,9 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
 RECAPTCHA_SECRET = env('RECAPTCHA_SECRET')
 
-ALLOWED_HOSTS = ['localhost', '192.168.1.42']
+ALLOWED_HOSTS = [
+
+]
 
 
 # Application definition
@@ -46,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'backend.middleware.SecurityHeadersMiddleware'
 ]
 
 
@@ -130,6 +133,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '200/day',
+        'user': '2000/day'
+    }
 }
 
 SIMPLE_JWT = {
@@ -155,9 +166,7 @@ AUTHENTICATION_BACKENDS = [
 
 #CORS
 CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:5173',
-    'http://192.168.1.42:5173',
-    'http://localhost:5173'
+    
 
 ]
 CORS_ALLOW_CREDENTIALS = True
@@ -165,16 +174,10 @@ CORS_ALLOW_CREDENTIALS = True
 
 #CSRF
 CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1:5173',
-    'http://192.168.1.42:5173',
-    'http://localhost:5173'
+    
 ]
-CSRF_COOKIES_SECURE = True
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SECURE = False
 
-SECURE_BROWSER_XSS_FILTER = True
+
 X_FRAME_OPTIONS = 'DENY'
 CSP_DEFAULT_SRC = ("'self'", )
 CSP_SCRIPT_SRC = (
@@ -196,16 +199,20 @@ CSP_IMG_SRC = (
 CSP_FONT_SRC = ("'self'", "https://fonts.gstatic.com")
 
 
-if DEBUG:
-    SECURE_SSL_REDIRECT = False
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-    AUTH_COOKIE_SECURE = False
-else:
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    AUTH_COOKIE_SECURE = True
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HISTS_PRELOAD = True
+CSRF_COOKIES_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+AUTH_COOKIE_SECURE = True
 
 cloudinary.config(
     cloud_name=env('CLOUD_NAME'),

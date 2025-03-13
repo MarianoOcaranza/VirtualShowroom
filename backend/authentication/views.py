@@ -4,12 +4,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from backend import settings
 from .permissions import IsVendedor
 from .authentication import CustomJWTAuthentication
+from rest_framework.throttling import AnonRateThrottle
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [AnonRateThrottle]
 
     def post(self, request):
          
@@ -39,8 +40,8 @@ class LoginView(APIView):
             key='jwt_token',
             value=access_token,
             httponly=True,
-            secure=False,
-            samesite='Lax',
+            secure=True,
+            samesite='None',
             path='/',
         )
        
@@ -54,9 +55,19 @@ class UserView(APIView):
     
 class LogoutView(APIView):
     authentication_classes = [CustomJWTAuthentication]
-    permission_classes = []
+    permission_classes = [IsAuthenticated]
     def post(self, request):
-        response = Response({"message": "logout exitoso"}, status=status.HTTP_200_OK)
-        response.delete_cookie('jwt_token')
-        response.delete_cookie('refresh_token')
-        return response
+        try:
+            refresh_token = request.COOKIES.get('refresh_token')
+            if refresh_token:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+
+            response = Response({"message": "logout exitoso"}, status=status.HTTP_200_OK)
+            response.delete_cookie('jwt_token')
+            response.delete_cookie('refresh_token')
+            response.delete_cookie('csrftoken')
+
+            return response
+        except Exception:
+            return Response({'error': 'error al cerrar sesion'}, status=status.HTTP_400_BAD_REQUEST)
