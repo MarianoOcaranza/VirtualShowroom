@@ -9,14 +9,9 @@ from .authentication import CustomJWTAuthentication
 from rest_framework.throttling import AnonRateThrottle
 
 class LoginView(APIView):
-    permission_classes = [AllowAny]
     throttle_classes = [AnonRateThrottle]
 
     def post(self, request):
-         
-        if getattr(request, 'limited', False):
-            return Response({'error': 'demasiadas solicitudes'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
-
         username = request.data.get('username')
         password = request.data.get('password')
         
@@ -35,10 +30,18 @@ class LoginView(APIView):
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
 
-        response = Response({'message': 'Login exitoso', 'is_vendedor': True}, status=status.HTTP_200_OK)
+        response = Response({'message': 'Login exitoso'}, status=status.HTTP_200_OK)
         response.set_cookie(
             key='jwt_token',
             value=access_token,
+            httponly=True,
+            secure=True,
+            samesite='None',
+            path='/',
+        )
+        response.set_cookie(
+            key='refresh_token',
+            value=str(refresh),
             httponly=True,
             secure=True,
             samesite='None',
@@ -51,7 +54,7 @@ class UserView(APIView):
     authentication_classes = [CustomJWTAuthentication]
     permission_classes = [IsAuthenticated, IsVendedor]
     def get(self, request):
-        return Response({"username": request.user.username, "email": request.user.email, "is_vendedor": request.user.is_vendedor()})
+        return Response({"username": request.user.username, "is_vendedor": request.user.is_vendedor()})
     
 class LogoutView(APIView):
     authentication_classes = [CustomJWTAuthentication]

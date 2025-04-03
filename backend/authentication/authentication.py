@@ -6,12 +6,11 @@ from rest_framework.exceptions import AuthenticationFailed
 
 class CustomJWTAuthentication(JWTAuthentication):
     def authenticate(self, request):
-        # Intenta autenticar usando la cabecera (Bearer Token)
-        header_auth = super().authenticate(request)
-        if header_auth:
-            return header_auth
+#        header_auth = super().authenticate(request)
+#        if header_auth:
+#            return header_auth
+#       ^^^^^ podria borrarse? ^^^^^^^
 
-        # Si no hay header, busca el token en las cookies
         jwt_token = request.COOKIES.get("jwt_token")
         if not jwt_token:
             return None
